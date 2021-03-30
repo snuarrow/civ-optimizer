@@ -28,7 +28,8 @@ class TerrainFactory():
             'oasis': {
                 'food': 3,
                 'gold': 1,
-            }
+            },
+            'desert_mountains': {}
         },
         {
             'plains': {
@@ -38,7 +39,8 @@ class TerrainFactory():
             'plains_hills': {
                 'food': 1,
                 'production': 2
-            }
+            },
+            'plains_mountains': {}
         },
         {
             'grassland': {
@@ -49,7 +51,8 @@ class TerrainFactory():
             },
             'marsh': {
                 'food': 3
-            }
+            },
+            'grassland_mountains': {}
         },
         {
             'tundra': {
@@ -58,20 +61,22 @@ class TerrainFactory():
             'tundra_hills': {
                 'food': 1,
                 'production': 1
-            }
+            },
+            'tundra_mountains': {}
+        },
+        {
+            'snow': {},
+            'snow_hills': {
+                'production': 1
+            },
+            'snow_mountains': {}
         }
     ]
 
     def __init__(self):
-        self.terrains = []
         for file in listdir('bitmaps'):
             if file.endswith('.png') and file != 'Woods.png':
                 key = file[:-4].lower()
-                self.terrains.append({
-                    'terrain': key,
-                    'image': pygame.image.load(f'bitmaps/{file}'),
-                    'rules': self._find_rule(key)
-                })
                 self.loaded_terrains[key] = Terrain(**self._find_rule(key), image=pygame.image.load(f'bitmaps/{file}'))
 
     def _find_rule(self, keyword: str):
@@ -79,15 +84,6 @@ class TerrainFactory():
             for rule in category:
                 if keyword.lower() == rule.lower():
                     return category[rule]
-
-    def _find_terrain(self, keyword: str):
-        for terrain in self.terrains:
-            if terrain['terrain'] == keyword.lower():
-                return terrain
-
-    def make_terrain(self, keyword: str):
-        terrain = self._find_terrain(keyword)
-        self.loaded_terrains[keyword] = Terrain(**terrain['rules'], image=terrain['image'])
 
     def iterate_terrain(self, category_modifier: int, rule_modifier: int):
         if category_modifier != 0:
@@ -105,4 +101,4 @@ class TerrainFactory():
             if self.rule_iterator >= len(self.rules[self.category_iterator]):
                 self.rule_iterator = 0
         key = list(self.rules[self.category_iterator])[self.rule_iterator]
-        return self.make_terrain(key)
+        return key
